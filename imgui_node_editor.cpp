@@ -1486,12 +1486,16 @@ void ed::EditorContext::End()
         ImVec2 offset    = m_Canvas.ViewOrigin() * (1.0f / m_Canvas.ViewScale());
         ImVec2 VIEW_POS  = m_Canvas.ViewRect().Min;
         ImVec2 VIEW_SIZE = m_Canvas.ViewRect().GetSize();
+        ImU32 bgTop = GetColor(StyleColor_BgTop);
+        ImU32 bgBottom = GetColor(StyleColor_BgBottom);
 
-        m_DrawList->AddRectFilled(VIEW_POS, VIEW_POS + VIEW_SIZE, GetColor(StyleColor_Bg));
+        m_DrawList->AddRectFilledMultiColor(VIEW_POS, VIEW_POS + VIEW_SIZE, bgTop, bgTop, bgBottom, bgBottom);
 
-        float IDEAL_GRID_SIZE  = 4.0f / m_Canvas.ViewScale();
-        if (IDEAL_GRID_SIZE < 4.0f)
-            IDEAL_GRID_SIZE = 4.0f;
+        float IDEAL_GRID_SIZE  = 8.0f / m_Canvas.ViewScale();
+        if (IDEAL_GRID_SIZE < 8.0f)
+            IDEAL_GRID_SIZE = 8.0f;
+
+        ImU32 GRID_COLOR = GetColor(StyleColor_Grid);
 
         for (int i = 0; i < 3; ++i) {
             float GRID_SIZE = pow(2, ceil(log2(IDEAL_GRID_SIZE))) * 0.5f * powf(2.0f, i);
@@ -1499,15 +1503,11 @@ void ed::EditorContext::End()
             float HI = IDEAL_GRID_SIZE * 1.0f;
             float DIFF = std::clamp<float>(fabs(GRID_SIZE - IDEAL_GRID_SIZE), LO, HI);
             float MIX = std::clamp<float>((DIFF - LO) / (HI - LO), 0.0f, 0.5f);
-            ImVec4 bg = m_Style.Colors[StyleColor_Bg];
-            ImVec4 grid = m_Style.Colors[StyleColor_Grid];
-            ImVec4 result = ImLerp<ImVec4>(bg, grid, MIX);
-            ImU32 GRID_COLOR = ImColor{ result.x, result.y, result.z, result.w };
             
             for (float x = fmodf(offset.x, GRID_SIZE); x < VIEW_SIZE.x; x += GRID_SIZE)
-                m_DrawList->AddLine(ImVec2(x, 0.0f) + VIEW_POS, ImVec2(x, VIEW_SIZE.y) + VIEW_POS, GRID_COLOR, 2.5f / m_Canvas.ViewScale() * MIX);
+                m_DrawList->AddLine(ImVec2(x, 0.0f) + VIEW_POS, ImVec2(x, VIEW_SIZE.y) + VIEW_POS, GRID_COLOR, 3.0f / m_Canvas.ViewScale() * MIX);
             for (float y = fmodf(offset.y, GRID_SIZE); y < VIEW_SIZE.y; y += GRID_SIZE)
-                m_DrawList->AddLine(ImVec2(0.0f, y) + VIEW_POS, ImVec2(VIEW_SIZE.x, y) + VIEW_POS, GRID_COLOR, 2.5f / m_Canvas.ViewScale() * MIX);
+                m_DrawList->AddLine(ImVec2(0.0f, y) + VIEW_POS, ImVec2(VIEW_SIZE.x, y) + VIEW_POS, GRID_COLOR, 3.0f / m_Canvas.ViewScale() * MIX);
         }
 
         /*float GRID_SIZE = 8.0f / m_Canvas.ViewScale();
@@ -5699,7 +5699,8 @@ const char* ed::Style::GetColorName(StyleColor colorIndex) const
 {
     switch (colorIndex)
     {
-        case StyleColor_Bg: return "Bg";
+        case StyleColor_BgTop: return "BgTop";
+        case StyleColor_BgBottom: return "BgBottom";
         case StyleColor_Grid: return "Grid";
         case StyleColor_NodeBg: return "NodeBg";
         case StyleColor_NodeBorder: return "NodeBorder";
