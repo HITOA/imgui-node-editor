@@ -1484,18 +1484,39 @@ void ed::EditorContext::End()
         m_DrawList->ChannelsSetCurrent(c_UserChannel_Grid);
 
         ImVec2 offset    = m_Canvas.ViewOrigin() * (1.0f / m_Canvas.ViewScale());
-        ImU32 GRID_COLOR = GetColor(StyleColor_Grid, ImClamp(m_Canvas.ViewScale() * m_Canvas.ViewScale(), 0.0f, 1.0f));
-        float GRID_SX    = 32.0f;// * m_Canvas.ViewScale();
-        float GRID_SY    = 32.0f;// * m_Canvas.ViewScale();
         ImVec2 VIEW_POS  = m_Canvas.ViewRect().Min;
         ImVec2 VIEW_SIZE = m_Canvas.ViewRect().GetSize();
 
         m_DrawList->AddRectFilled(VIEW_POS, VIEW_POS + VIEW_SIZE, GetColor(StyleColor_Bg));
 
-        for (float x = fmodf(offset.x, GRID_SX); x < VIEW_SIZE.x; x += GRID_SX)
-            m_DrawList->AddLine(ImVec2(x, 0.0f) + VIEW_POS, ImVec2(x, VIEW_SIZE.y) + VIEW_POS, GRID_COLOR);
-        for (float y = fmodf(offset.y, GRID_SY); y < VIEW_SIZE.y; y += GRID_SY)
-            m_DrawList->AddLine(ImVec2(0.0f, y) + VIEW_POS, ImVec2(VIEW_SIZE.x, y) + VIEW_POS, GRID_COLOR);
+        float IDEAL_GRID_SIZE  = 4.0f / m_Canvas.ViewScale();
+        if (IDEAL_GRID_SIZE < 4.0f)
+            IDEAL_GRID_SIZE = 4.0f;
+
+        for (int i = 0; i < 3; ++i) {
+            float GRID_SIZE = pow(2, ceil(log2(IDEAL_GRID_SIZE))) * 0.5f * powf(2.0f, i);
+            float LO = IDEAL_GRID_SIZE * 0.75f;
+            float HI = IDEAL_GRID_SIZE * 1.0f;
+            float DIFF = std::clamp<float>(fabs(GRID_SIZE - IDEAL_GRID_SIZE), LO, HI);
+            float MIX = std::clamp<float>((DIFF - LO) / (HI - LO), 0.0f, 0.5f);
+            ImVec4 bg = m_Style.Colors[StyleColor_Bg];
+            ImVec4 grid = m_Style.Colors[StyleColor_Grid];
+            ImVec4 result = ImLerp<ImVec4>(bg, grid, MIX);
+            ImU32 GRID_COLOR = ImColor{ result.x, result.y, result.z, result.w };
+            
+            for (float x = fmodf(offset.x, GRID_SIZE); x < VIEW_SIZE.x; x += GRID_SIZE)
+                m_DrawList->AddLine(ImVec2(x, 0.0f) + VIEW_POS, ImVec2(x, VIEW_SIZE.y) + VIEW_POS, GRID_COLOR, 2.5f / m_Canvas.ViewScale() * MIX);
+            for (float y = fmodf(offset.y, GRID_SIZE); y < VIEW_SIZE.y; y += GRID_SIZE)
+                m_DrawList->AddLine(ImVec2(0.0f, y) + VIEW_POS, ImVec2(VIEW_SIZE.x, y) + VIEW_POS, GRID_COLOR, 2.5f / m_Canvas.ViewScale() * MIX);
+        }
+
+        /*float GRID_SIZE = 8.0f / m_Canvas.ViewScale();
+        ImU32 GRID_COLOR = GetColor(StyleColor_Grid, ImClamp(m_Canvas.ViewScale() * m_Canvas.ViewScale(), 0.0f, 0.6f));
+
+        for (float x = fmodf(offset.x, GRID_SIZE); x < VIEW_SIZE.x; x += GRID_SIZE)
+            m_DrawList->AddLine(ImVec2(x, 0.0f) + VIEW_POS, ImVec2(x, VIEW_SIZE.y) + VIEW_POS, GRID_COLOR, 1.5f / m_Canvas.ViewScale());
+        for (float y = fmodf(offset.y, GRID_SIZE); y < VIEW_SIZE.y; y += GRID_SIZE)
+            m_DrawList->AddLine(ImVec2(0.0f, y) + VIEW_POS, ImVec2(VIEW_SIZE.x, y) + VIEW_POS, GRID_COLOR, 1.5f / m_Canvas.ViewScale());*/
     }
 # endif
 
