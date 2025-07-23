@@ -141,6 +141,7 @@ enum StyleColor
     StyleColor_BgTop,
     StyleColor_Grid,
     StyleColor_NodeBg,
+    StyleColor_NodeShadow,
     StyleColor_NodeBorder,
     StyleColor_HovNodeBorder,
     StyleColor_SelNodeBorder,
@@ -165,6 +166,7 @@ enum StyleVar
 {
     StyleVar_NodePadding,
     StyleVar_NodeRounding,
+    StyleVar_NodeShadowThickness,
     StyleVar_NodeBorderWidth,
     StyleVar_HoveredNodeBorderWidth,
     StyleVar_SelectedNodeBorderWidth,
@@ -198,6 +200,7 @@ struct Style
 {
     ImVec4  NodePadding;
     float   NodeRounding;
+    float   NodeShadowThickness;
     float   NodeBorderWidth;
     float   HoveredNodeBorderWidth;
     float   HoverNodeBorderOffset;
@@ -228,8 +231,9 @@ struct Style
     Style()
     {
         NodePadding              = ImVec4(8, 8, 8, 8);
-        NodeRounding             = 12.0f;
-        NodeBorderWidth          = 1.5f;
+        NodeRounding             = 2.0f;
+        NodeShadowThickness      = 20.0f;
+        NodeBorderWidth          = 0.25f;
         HoveredNodeBorderWidth   = 3.5f;
         HoverNodeBorderOffset    = 0.0f;
         SelectedNodeBorderWidth  = 3.5f;
@@ -262,8 +266,9 @@ struct Style
         Colors[StyleColor_BgBottom]           = ImColor( 16,  16,  17, 255);
         Colors[StyleColor_BgTop]              = ImColor( 36,  36,  37, 255);
         Colors[StyleColor_Grid]               = ImColor(120, 120, 130,  10);
-        Colors[StyleColor_NodeBg]             = ImColor( 32,  32,  32, 200);
-        Colors[StyleColor_NodeBorder]         = ImColor(255, 255, 255,  96);
+        Colors[StyleColor_NodeBg]             = ImColor( 75,  75,  78, 255);
+        Colors[StyleColor_NodeShadow]         = ImColor(  0,   0,   0, 128);
+        Colors[StyleColor_NodeBorder]         = ImColor( 50,  50,  52, 255);
         Colors[StyleColor_HovNodeBorder]      = ImColor( 50, 176, 255, 255);
         Colors[StyleColor_SelNodeBorder]      = ImColor(255, 176,  50, 255);
         Colors[StyleColor_NodeSelRect]        = ImColor(  5, 130, 255,  64);

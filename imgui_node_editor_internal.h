@@ -390,7 +390,9 @@ struct Node final: Object
     ImVec2   m_DragStart;
 
     ImU32    m_Color;
+    ImU32    m_ColorShadow;
     ImU32    m_BorderColor;
+    float    m_ShadowThickness;
     float    m_BorderWidth;
     float    m_Rounding;
 
@@ -415,7 +417,9 @@ struct Node final: Object
         , m_LastPin(nullptr)
         , m_DragStart()
         , m_Color(IM_COL32_WHITE)
+        , m_ColorShadow(IM_COL32_BLACK)
         , m_BorderColor(IM_COL32_BLACK)
+        , m_ShadowThickness(0)
         , m_BorderWidth(0)
         , m_Rounding(0)
         , m_GroupBounds()

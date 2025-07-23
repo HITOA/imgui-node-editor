@@ -648,10 +648,21 @@ void ed::Node::Draw(ImDrawList* drawList, DrawFlags flags)
     {
         drawList->ChannelsSetCurrent(m_Channel + c_NodeBackgroundChannel);
 
+        drawList->AddShadowRect(
+            m_Bounds.Min, 
+            m_Bounds.Max, 
+            m_ColorShadow, 
+            m_ShadowThickness, 
+            ImVec2{ 0.0f, 0.0f }, 
+            0,
+            m_Rounding);
+
         drawList->AddRectFilled(
             m_Bounds.Min,
             m_Bounds.Max,
-            m_Color, m_Rounding);
+            m_Color,
+            m_Rounding
+        );
 
         if (IsGroup(this))
         {
@@ -1490,6 +1501,7 @@ void ed::EditorContext::End()
         ImU32 bgBottom = GetColor(StyleColor_BgBottom);
 
         m_DrawList->AddRectFilledMultiColor(VIEW_POS, VIEW_POS + VIEW_SIZE, bgTop, bgTop, bgBottom, bgBottom);
+        //m_DrawList->AddShadowRect();
 
         float IDEAL_GRID_SIZE  = 8.0f / m_Canvas.ViewScale();
         if (IDEAL_GRID_SIZE < 8.0f)
@@ -5270,7 +5282,9 @@ void ed::NodeBuilder::Begin(NodeId nodeId)
     m_CurrentNode->m_IsLive           = true;
     m_CurrentNode->m_LastPin          = nullptr;
     m_CurrentNode->m_Color            = Editor->GetColor(StyleColor_NodeBg, alpha);
+    m_CurrentNode->m_ColorShadow      = Editor->GetColor(StyleColor_NodeShadow, alpha);
     m_CurrentNode->m_BorderColor      = Editor->GetColor(StyleColor_NodeBorder, alpha);
+    m_CurrentNode->m_ShadowThickness  = editorStyle.NodeShadowThickness;
     m_CurrentNode->m_BorderWidth      = editorStyle.NodeBorderWidth;
     m_CurrentNode->m_Rounding         = editorStyle.NodeRounding;
     m_CurrentNode->m_GroupColor       = Editor->GetColor(StyleColor_GroupBg, alpha);
@@ -5731,6 +5745,7 @@ float* ed::Style::GetVarFloatAddr(StyleVar idx)
     switch (idx)
     {
         case StyleVar_NodeRounding:             return &NodeRounding;
+        case StyleVar_NodeShadowThickness:      return &NodeShadowThickness;
         case StyleVar_NodeBorderWidth:          return &NodeBorderWidth;
         case StyleVar_HoveredNodeBorderWidth:   return &HoveredNodeBorderWidth;
         case StyleVar_SelectedNodeBorderWidth:  return &SelectedNodeBorderWidth;
