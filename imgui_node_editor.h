@@ -268,7 +268,7 @@ struct Style
         Colors[StyleColor_Grid]               = ImColor(120, 120, 130,  10);
         Colors[StyleColor_NodeBg]             = ImColor( 75,  75,  78, 255);
         Colors[StyleColor_NodeShadow]         = ImColor(  0,   0,   0, 128);
-        Colors[StyleColor_NodeBorder]         = ImColor( 50,  50,  52, 255);
+        Colors[StyleColor_NodeBorder]         = ImColor(100, 100, 105, 255);
         Colors[StyleColor_HovNodeBorder]      = ImColor( 50, 176, 255, 255);
         Colors[StyleColor_SelNodeBorder]      = ImColor(255, 176,  50, 255);
         Colors[StyleColor_NodeSelRect]        = ImColor(  5, 130, 255,  64);
