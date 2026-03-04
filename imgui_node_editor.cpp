@@ -5434,8 +5434,17 @@ void ed::NodeBuilder::EndPin()
         if (m_PivotSize.y < 0)
             m_PivotSize.y = pinRect.GetHeight();
 
-        m_CurrentPin->m_Pivot.Min = pinRect.Min + ImMul(pinRect.GetSize(), m_PivotAlignment);
-        m_CurrentPin->m_Pivot.Max = m_CurrentPin->m_Pivot.Min + ImMul(m_PivotSize, m_PivotScale);
+        //m_CurrentPin->m_Pivot.Min = pinRect.Min + ImMul(pinRect.GetSize(), m_PivotAlignment);
+        //m_CurrentPin->m_Pivot.Max = m_CurrentPin->m_Pivot.Min + ImMul(m_PivotSize, m_PivotScale);
+        
+        float yOffset = (pinRect.Max.y - pinRect.Min.y) / 2.0f;
+
+        if (m_CurrentPin->m_Kind == PinKind::Input)
+            m_CurrentPin->m_Pivot.Min = ImVec2{ pinRect.Min.x, pinRect.Min.y + yOffset };
+        else
+            m_CurrentPin->m_Pivot.Min = ImVec2{ pinRect.Max.x, pinRect.Min.y + yOffset };
+            
+        m_CurrentPin->m_Pivot.Max = m_CurrentPin->m_Pivot.Min;
     }
 
     // #debug: Draw pin bounds
